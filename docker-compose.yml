@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: skoola_auth
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  auth-service:
+    build:
+      context: ./services/auth-service
+    ports:
+      - '3001:3001'
+    environment:
+      DATABASE_URL: postgres://user:password@postgres:5432/skoola_auth
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
